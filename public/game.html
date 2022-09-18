@@ -1,0 +1,31 @@
+ <!DOCTYPE html>
+<html>
+<body>
+
+<h1>Online Minesweeper</h1>
+<p>Left click to reveal tile, right click to set flag.</p>
+
+<canvas id="myCanvas" width="336" height="336" style="border:1px solid #000000;">
+</canvas> 
+
+<script>
+
+function draw() {
+  const ctx = document.getElementById('myCanvas').getContext('2d');
+  const img = new Image();
+  img.onload = () => {
+    for (let i = 0; i < 16; i++) {
+      for (let j = 0; j < 16; j++) {
+        ctx.drawImage(img, j * 21, i * 21, 21, 21);
+      }
+    }
+  };
+  img.src = 'assets/unrevealed.png';
+}
+
+draw();
+
+</script>
+
+</body>
+</html> 
