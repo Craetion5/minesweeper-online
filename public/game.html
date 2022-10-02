@@ -1,31 +1,143 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
+
 <body>
 
-<h1>Online Minesweeper</h1>
-<p>Left click to reveal tile, right click to set flag.</p>
+  <h1>Online Minesweeper</h1>
+  <p>Left click to reveal tile, right click to set flag.</p>
 
-<canvas id="myCanvas" width="336" height="336" style="border:1px solid #000000;">
-</canvas> 
+  <canvas id="myCanvas" oncontextmenu="return false" style="border:1px solid #000000;">
+  </canvas>
 
-<script>
+  <p>Player count: 1</p>
+  <p>Flags placed: ?/?</p>
 
-function draw() {
-  const ctx = document.getElementById('myCanvas').getContext('2d');
-  const img = new Image();
-  img.onload = () => {
-    for (let i = 0; i < 16; i++) {
-      for (let j = 0; j < 16; j++) {
-        ctx.drawImage(img, j * 21, i * 21, 21, 21);
+  <script>
+
+    //todo: get array from server instead
+    var arr = Array.from(Array(24), () => new Array(16));
+    //0-8: mines, 9: unidentified, 10: flag, 11: mine
+
+    for (let i = 0; i < arr.length; i++) {
+      for (let j = 0; j < arr[0].length; j++) {
+        arr[i][j] = 9;
       }
     }
-  };
-  img.src = 'assets/unrevealed.png';
-}
 
-draw();
+    arr[0][0] = 1;
+    arr[1][0] = 2;
+    arr[2][0] = 3;
+    arr[3][0] = 4;
+    arr[4][0] = 5;
+    arr[5][0] = 6;
+    arr[6][0] = 7;
+    arr[7][0] = 8;
 
-</script>
+    arr[0][1] = 10;
+    arr[1][1] = 11;
+
+    function draw() {
+
+      var canvas = document.getElementById('myCanvas'),
+        canvasLeft = canvas.offsetLeft + canvas.clientLeft,
+        canvasTop = canvas.offsetTop + canvas.clientTop;
+
+      const ctx = canvas.getContext('2d');
+      ctx.canvas.width = arr.length * 21;
+      ctx.canvas.height = arr[0].length * 21;
+
+
+      canvas.addEventListener('click', function () {
+        var x = event.pageX - canvasLeft,
+        y = event.pageY - canvasTop;
+        console.log("left clicked at ("+Math.floor(x/21)+","+Math.floor(y/21)+")")
+      }, false);
+
+      canvas.addEventListener('contextmenu', function () {
+        var x = event.pageX - canvasLeft,
+        y = event.pageY - canvasTop;
+        console.log("right clicked at ("+Math.floor(x/21)+","+Math.floor(y/21)+")")
+      }, false);
+
+      const img_unid = new Image(),
+        img_flag = new Image(),
+        img_mine = new Image(),
+        img_0 = new Image(),
+        img_1 = new Image(),
+        img_2 = new Image(),
+        img_3 = new Image(),
+        img_4 = new Image(),
+        img_5 = new Image(),
+        img_6 = new Image(),
+        img_7 = new Image(),
+        img_8 = new Image();
+
+      window.addEventListener('load', (event) => {
+        for (let i = 0; i < arr.length; i++) {
+          for (let j = 0; j < arr[0].length; j++) {
+            switch (arr[i][j]) {
+              case 0:
+                ctx.drawImage(img_0, i * 21, j * 21, 21, 21);
+                break;
+              case 1:
+                ctx.drawImage(img_1, i * 21, j * 21, 21, 21);
+                break;
+              case 2:
+                ctx.drawImage(img_2, i * 21, j * 21, 21, 21);
+                break;
+              case 3:
+                ctx.drawImage(img_3, i * 21, j * 21, 21, 21);
+                break;
+              case 4:
+                ctx.drawImage(img_4, i * 21, j * 21, 21, 21);
+                break;
+              case 5:
+                ctx.drawImage(img_5, i * 21, j * 21, 21, 21);
+                break;
+              case 6:
+                ctx.drawImage(img_6, i * 21, j * 21, 21, 21);
+                break;
+              case 7:
+                ctx.drawImage(img_7, i * 21, j * 21, 21, 21);
+                break;
+              case 8:
+                ctx.drawImage(img_8, i * 21, j * 21, 21, 21);
+                break;
+              case 9:
+                ctx.drawImage(img_unid, i * 21, j * 21, 21, 21);
+                break;
+              case 10:
+                ctx.drawImage(img_flag, i * 21, j * 21, 21, 21);
+                break;
+              case 11:
+                ctx.drawImage(img_mine, i * 21, j * 21, 21, 21);
+                break;
+              default:
+
+            }
+          }
+        }
+      });
+
+      img_unid.src = 'assets/unrevealed.png';
+      img_flag.src = 'assets/flag.png';
+      img_mine.src = 'assets/mine_hit.png';
+      img_0.src = 'assets/mine_0.png';
+      img_1.src = 'assets/mine_1.png';
+      img_2.src = 'assets/mine_2.png';
+      img_3.src = 'assets/mine_3.png';
+      img_4.src = 'assets/mine_4.png';
+      img_5.src = 'assets/mine_5.png';
+      img_6.src = 'assets/mine_6.png';
+      img_7.src = 'assets/mine_7.png';
+      img_8.src = 'assets/mine_8.png';
+
+    }
+
+    draw();
+
+  </script>
 
 </body>
-</html> 
+
+</html>
