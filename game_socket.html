@@ -1,0 +1,42 @@
+
+ <canvas id="myCanvas" width="336" height="336" style="border:1px solid #000000;">
+ </canvas> 
+-
++<script src="/socket.io/socket.io.js"></script>
++<script type="module" src="game.js"></script>
+ <script>
+ 
++let socket = io();
++let playerCount = 0;
++socket.on('playercount updated', (newCount) => {
++  playerCount = newCount;
++  console.log(playerCount);
++})
++
++function send(data) {
++  socket.emit('user clicked', data);
++}
++
++
++
+ function draw() {
+   const ctx = document.getElementById('myCanvas').getContext('2d');
+   const img = new Image();
+@@ -23,8 +37,17 @@ function draw() {
+   img.src = 'assets/unrevealed.png';
+ }
+ 
++function clicked(x, y) {
++  send({x, y});
++}
++
++clicked(4, 5)
++
+ draw();
+ 
++
++
++
+ </script>
+ 
+ </body>

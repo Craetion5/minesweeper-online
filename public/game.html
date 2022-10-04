@@ -9,11 +9,27 @@
   <canvas id="myCanvas" oncontextmenu="return false" style="border:1px solid #000000;">
   </canvas>
 
-  <p>Player count: 1</p>
-  <p>Flags placed: ?/?</p>
-
+  <p>Player count: <span id="playercount">?</span></p>
+  <p>Flags placed: <span id="flagsplaced">?</span>/<span id="flagstotal">?</span></p>
+<script src="/socket.io/socket.io.js"></script>
   <script>
-
+    let socket = io();
+    var playerCount = 0;
+    var arr = {};
+    function clicked(x, y) {
+      socket.emit('user clicked', {x, y});
+    }
+    socket.on('playercount updated', (newCount) => {
+      playerCount = newCount;
+      console.log({playerCount});
+      document.getElementById("playercount").textContent = playerCount;
+    });
+    socket.on('gamestate updated', (newState) => {
+      arr = newState;
+      // draw(); here after extracting draw logic
+      console.log('Gamestate update received:')
+      console.log({newState})
+    });
     //todo: get array from server instead
     var arr = Array.from(Array(24), () => new Array(16));
     //0-8: mines, 9: unidentified, 10: flag, 11: mine
@@ -48,9 +64,12 @@
 
 
       canvas.addEventListener('click', function () {
-        var x = event.pageX - canvasLeft,
-        y = event.pageY - canvasTop;
-        console.log("left clicked at ("+Math.floor(x/21)+","+Math.floor(y/21)+")")
+        let x = Math.floor((event.pageX - canvasLeft) / 21);
+        let y = Math.floor((event.pageY - canvasTop) / 21);
+        console.log("left clicked at x: ", x , " y: ", y)
+
+        clicked(x, y);
+
       }, false);
 
       canvas.addEventListener('contextmenu', function () {
@@ -135,6 +154,8 @@
     }
 
     draw();
+
+    
 
   </script>
 
