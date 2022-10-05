@@ -19,7 +19,7 @@ Definition of event names backend and frontend should use. Backend always sends 
 + 'gamestate updated' - data: game state as two-dimensional array
   + Backend sends this after game logic is ran and game state is updated
   + Frontend listens to this event and renders gamestate every time it is received
-+ 'client clicked on x, y' - data: {x, y}
++ 'clicked' - data: {x, y}
   + Frontend sends this when user clicks on tile
   + Backend listens to this event and performs game logic. Other user may have clicked on it right before, or the tile is not clickable (is already open). In this case, logic is interrupted and no update is done or sent.
 + 'connection' and 'disconnect' on backend only
