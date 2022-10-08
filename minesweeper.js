@@ -47,11 +47,8 @@ const initGame = () => {
 initGame();
 
 const runGameLogic = (x, y) => {
-  // Check if x, y is an open tile
-  // If not, return without doing anything
-  // Otherwise, open tile x, y
-  // then, run updateGameStateToClients(clientMap)
   console.log("running game logic")
+  updateStateToClients();
 }
 
 app.use(express.static('public'))
