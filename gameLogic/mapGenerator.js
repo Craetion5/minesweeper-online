@@ -1,73 +1,63 @@
-
-const map =  []
-const clientMap = []
+const map = [];
+const clientMap = [];
+let mapHeight = null;
+let mapWidth = null;
 
 function createMap(height, width) {
-    for (let y = 0; y < height; y++) {
-        var row = []
-        var row1 = []
-        for (let x = 0; x < width; x++) {
-            row[x] = 0;
-            row1[x] = 0;
-        }
-        map[y] = row
-        clientMap[y] = row1
+  mapHeight = height;
+  mapWidth = width;
+  for (let y = 0; y < height; y++) {
+    var row = [];
+    var row1 = [];
+    for (let x = 0; x < width; x++) {
+      row[x] = 0;
+      row1[x] = 9;
     }
-    placeMines(height, width);
-return map
+    map[y] = row;
+    clientMap[y] = row1;
+  }
+  placeMines(height, width);
+  for (line of map) {
+    console.log(line);
+  }
+  return { fullMap: map, clientMap };
+}
+
+function inBounds(x, y) {
+    return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
 }
 
 function placeMines(height, width) {
-    var amountOfMines = height / 2;
+  var amountOfMines = height / 2;
 
-    for (let index = 0; index < amountOfMines; index++) {
-           randomX = Math.floor(Math.random() * width);
-           randomY = Math.floor(Math.random() * height);
-           map[randomY][randomX] = "*";
-           
-           if(randomY + 1 < height && randomX + 1 < width) {
-            if(typeof map[randomY + 1][randomX + 1] == "number"){
-                map[randomY + 1][randomX + 1] += 1
+  for (let index = 0; index < amountOfMines; index++) {
+    mineX = Math.floor(Math.random() * width);
+    mineY = Math.floor(Math.random() * height);
+    map[mineY][mineX] = 11;
+
+    for (let dx = -1; dx <= 1; dx += 1) {
+        for (let dy = -1; dy <= 1; dy += 1) {
+            if (dx === dy === 0) {
+                continue;
             }
-            
-           }
-           if(randomY + 1 < height) {
-            if(typeof map[randomY + 1][randomX] == "number"){
-            map[randomY + 1][randomX] += 1
+            let x = mineX + dx;
+            let y = mineY + dy;
+            if (!inBounds(x, y)) {
+                continue;
             }
-           }
-           if(randomX + 1 < width) {
-            if( typeof map[randomY][randomX + 1] == "number"){
-            map[randomY][randomX + 1] += 1
+            if (map[y][x] < 8 && map[y][x] >= 0) {
+                map[y][x] += 1;
             }
-           }
-           if(randomY - 1 >= 0 && randomX - 1 >= 0) {
-            if(typeof map[randomY - 1][randomX - 1] == "number"){
-            map[randomY-1][randomX-1] += 1
-            }
-           }
-           if(randomY - 1 >= 0) {
-            if(typeof map[randomY - 1][randomX] == "number"){
-            map[randomY-1][randomX] += 1
-            }
-           }
-           if(randomX - 1 >= 0) {
-            if(typeof map[randomY][randomX - 1] == "number"){
-            map[randomY][randomX-1] += 1
-            }
-           }
-           
+        }
     }
-
+  }
 }
 
 function updateMapValue(x, y, type) {
-    if(type == "flag") {
-        clientMap[y][x] = "/"
-    } else {
-        clientMap[y][x] = map[y][x]
-
-    }
-
+  if (type == "flag") {
+    clientMap[y][x] = 10;
+  } else {
+    clientMap[y][x] = map[y][x];
+  }
 }
 module.exports = { createMap };

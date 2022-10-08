@@ -78,8 +78,8 @@
         canvasTop = canvas.offsetTop + canvas.clientTop;
 
       ctx = canvas.getContext('2d');
-      ctx.canvas.width = arr.length * 21;
-      ctx.canvas.height = arr[0].length * 21;
+      ctx.canvas.height = arr.length * 21;
+      ctx.canvas.width = arr[0].length * 21;
 
 
       canvas.addEventListener('click', function () {
@@ -99,9 +99,9 @@
 
     };
     function draw() {
-      for (let i = 0; i < arr.length; i++) {
-        for (let j = 0; j < arr[0].length; j++) {
-          switch (arr[i][j]) {
+      for (let i = 0; i < arr[0].length; i++) {
+        for (let j = 0; j < arr.length; j++) {
+          switch (arr[j][i]) {
             case 0:
               ctx.drawImage(img_0, i * 21, j * 21, 21, 21);
               break;
