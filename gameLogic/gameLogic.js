@@ -12,7 +12,7 @@ const runGameLogic = (clientMap, fullMap, x, y) => {
         return allOpened(clientMap, fullMap) ? 1 : 0;
     } else {
         console.log("Tile was already opened");
-        return false;
+        return null;
 
     }
 };

@@ -47,6 +47,7 @@ io.on("connection", (socket) => {
     updatePlayerCount();
   });
   socket.on("clicked", (data) => {
+    console.log({data})
     console.log("Player clicked on ", { x: data.x, y: data.y, tile: clientMap[data.y][data.x] });
     const state = runGameLogic(clientMap, fullMap, data.x, data.y);
     if (state === 1) {
