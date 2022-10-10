@@ -7,6 +7,7 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 const { createMap } = require("./gameLogic/mapGenerator.js");
+const { runGameLogic } = require("./gameLogic/gameLogic.js");
 let clientAmount = 0;
 
 let fullMap = [];
@@ -30,15 +31,6 @@ const initGame = () => {
 
 initGame();
 
-const runGameLogic = (x, y) => {
-  if (clientMap[y][x] === 9) {
-    console.log("Running game logic");
-    clientMap[y][x] = fullMap[y][x];
-    updateStateToClients();
-  } else {
-    console.log("Tile was already opened");
-  }
-};
 
 app.use(express.static("public"));
 
@@ -55,8 +47,18 @@ io.on("connection", (socket) => {
     updatePlayerCount();
   });
   socket.on("clicked", (data) => {
+    console.log({data})
     console.log("Player clicked on ", { x: data.x, y: data.y, tile: clientMap[data.y][data.x] });
-    runGameLogic(data.x, data.y);
+    const state = runGameLogic(clientMap, fullMap, data.x, data.y);
+    if (state === 1) {
+      console.log("Game won")
+    } else if (state === -1) {
+      console.log("Game over")
+      clientMap = fullMap // reveal map if game over
+    }
+    if (state != null) {
+      updateStateToClients();
+    }
   });
 });
 
