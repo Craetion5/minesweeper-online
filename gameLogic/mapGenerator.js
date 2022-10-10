@@ -17,9 +17,6 @@ function createMap(height, width) {
     clientMap[y] = row1;
   }
   placeMines(height, width);
-  for (line of map) {
-    console.log(line);
-  }
   return { fullMap: map, clientMap };
 }
 
@@ -28,11 +25,15 @@ function inBounds(x, y) {
 }
 
 function placeMines(height, width) {
-  var amountOfMines = height / 2;
+  var amountOfMines =  height * 7;
 
   for (let index = 0; index < amountOfMines; index++) {
     mineX = Math.floor(Math.random() * width);
     mineY = Math.floor(Math.random() * height);
+    if (map[mineY][mineX] === 11) {
+      index--;
+      continue;
+    }
     map[mineY][mineX] = 11;
 
     for (let dx = -1; dx <= 1; dx += 1) {
