@@ -38,9 +38,6 @@ const allOpened = (clientMap, fullMap) => {
 const openAdjacentTiles = (clientMap, fullMap, x, y, visited) => {
     for (let dx = -1; dx <= 1; dx += 1) {
         for (let dy = -1; dy <= 1; dy += 1) {
-            if ((Math.abs(dx) === 1 && Math.abs(dy) === 1)) {
-                continue;
-            }
             let curx = x + dx;
             let cury = y + dy;
             if (!(curx < clientMap[0].length && cury < clientMap.length

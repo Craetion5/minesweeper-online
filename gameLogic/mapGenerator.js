@@ -21,7 +21,7 @@ function createMap(height, width, minesPercentage) {
 }
 
 function inBounds(x, y) {
-    return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
+  return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
 }
 
 function placeMines(height, width, minesPercentage) {
@@ -37,28 +37,20 @@ function placeMines(height, width, minesPercentage) {
     map[mineY][mineX] = 11;
 
     for (let dx = -1; dx <= 1; dx += 1) {
-        for (let dy = -1; dy <= 1; dy += 1) {
-            if (dx === dy === 0) {
-                continue;
-            }
-            let x = mineX + dx;
-            let y = mineY + dy;
-            if (!inBounds(x, y)) {
-                continue;
-            }
-            if (map[y][x] < 8 && map[y][x] >= 0) {
-                map[y][x] += 1;
-            }
+      for (let dy = -1; dy <= 1; dy += 1) {
+        if (dx === dy === 0) {
+          continue;
         }
+        let x = mineX + dx;
+        let y = mineY + dy;
+        if (!inBounds(x, y)) {
+          continue;
+        }
+        if (map[y][x] < 8 && map[y][x] >= 0) {
+          map[y][x] += 1;
+        }
+      }
     }
-  }
-}
-
-function updateMapValue(x, y, type) {
-  if (type == "flag") {
-    clientMap[y][x] = 10;
-  } else {
-    clientMap[y][x] = map[y][x];
   }
 }
 module.exports = { createMap };

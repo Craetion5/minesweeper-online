@@ -10,7 +10,7 @@
   </canvas>
 
   <p>Player count: <span id="playercount">?</span></p>
-  <p>Flags placed: <span id="flagsplaced">?</span>/<span id="flagstotal">?</span></p></br>
+  <p>Flags placed: <span id="flagsplaced">0</span>/<span id="flagstotal">?</span></p></br>
 
   <h2>Start a new game</h2>
 
@@ -27,8 +27,12 @@
     var arr = [];
     var ctx;
     var canvas = null;
+    var flags = 0;
     function clicked(x, y) {
       socket.emit('clicked', { x, y });
+    }
+    function rightClicked(x, y) {
+      socket.emit('rightClicked', { x, y });
     }
     function newGame() {
       var gameWidth = document.getElementById("widthField").value;
@@ -46,9 +50,18 @@
       console.log('Gamestate update received:')
       console.log({ newState })
       arr = newState;
-      //if (canvas === null) {
+      if (canvas === null) {
       initCanvas();
-      //}
+      }
+      draw();
+    });
+    socket.on('new game activated', (newState) => {
+      console.log('New game activation received:')
+      console.log({ newState })
+      arr = newState;
+      ctx = canvas.getContext('2d');
+      ctx.canvas.height = arr.length * 21;
+      ctx.canvas.width = arr[0].length * 21;
       draw();
     });
 
@@ -107,13 +120,17 @@
       }, false);
 
       canvas.addEventListener('contextmenu', function () {
-        var x = event.pageX - canvasLeft,
-          y = event.pageY - canvasTop;
-        console.log("right clicked at (" + Math.floor(x / 21) + "," + Math.floor(y / 21) + ")")
+        let x = Math.floor((event.pageX - canvasLeft) / 21);
+        let y = Math.floor((event.pageY - canvasTop) / 21);
+        console.log("right clicked at x: ", x, " y: ", y)
+
+        rightClicked(x, y);
       }, false);
 
     };
     function draw() {
+      flags = 0;
+      document.getElementById("flagsplaced").textContent = 0;
       for (let i = 0; i < arr[0].length; i++) {
         for (let j = 0; j < arr.length; j++) {
           switch (arr[j][i]) {
@@ -149,6 +166,8 @@
               break;
             case 10:
               ctx.drawImage(img_flag, i * 21, j * 21, 21, 21);
+              flags++;
+              document.getElementById("flagsplaced").textContent = flags;
               break;
             case 11:
               ctx.drawImage(img_mine, i * 21, j * 21, 21, 21);

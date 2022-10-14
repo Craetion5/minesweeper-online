@@ -6,7 +6,7 @@ const path = require("path");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-const { createMap } = require("./gameLogic/mapGenerator.js");
+const { createMap} = require("./gameLogic/mapGenerator.js");
 const { runGameLogic } = require("./gameLogic/gameLogic.js");
 let clientAmount = 0;
 
@@ -16,6 +16,10 @@ let clientMap = [];
 // After game state update, broadcast new state to all clients
 const updateStateToClients = () => {
   io.emit("gamestate updated", clientMap);
+};
+
+const updateNewGameToClients = () => {
+  io.emit("new game activated", clientMap);
 };
 
 const updatePlayerCount = (state) => {
@@ -60,10 +64,20 @@ io.on("connection", (socket) => {
       updateStateToClients();
     }
   });
+  socket.on("rightClicked", (data) => {
+    console.log({ data })
+    console.log("Player right clicked on ", { x: data.x, y: data.y, tile: clientMap[data.y][data.x] });
+    if (clientMap[data.y][data.x] === 10) {
+      clientMap[data.y][data.x] = 9;
+    } else if (clientMap[data.y][data.x] === 9){
+      clientMap[data.y][data.x] = 10;
+    }
+    updateStateToClients(clientMap);
+  });
   socket.on("newGame", (data) => {
     console.log("Starting a new game...")
     initGame(data.gameWidth, data.gameHeight, data.mineDensity);
-    updateStateToClients(clientMap);
+    updateNewGameToClients(clientMap);
   });
 });
 
