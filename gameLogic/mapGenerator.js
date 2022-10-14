@@ -3,7 +3,7 @@ const clientMap = [];
 let mapHeight = null;
 let mapWidth = null;
 
-function createMap(height, width) {
+function createMap(height, width, minesPercentage) {
   mapHeight = height;
   mapWidth = width;
   for (let y = 0; y < height; y++) {
@@ -16,7 +16,7 @@ function createMap(height, width) {
     map[y] = row;
     clientMap[y] = row1;
   }
-  placeMines(height, width);
+  placeMines(height, width, minesPercentage);
   return { fullMap: map, clientMap };
 }
 
@@ -24,8 +24,8 @@ function inBounds(x, y) {
     return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
 }
 
-function placeMines(height, width) {
-  var amountOfMines =  height * 7;
+function placeMines(height, width, minesPercentage) {
+  var amountOfMines = height * width * minesPercentage / 100;
 
   for (let index = 0; index < amountOfMines; index++) {
     mineX = Math.floor(Math.random() * width);

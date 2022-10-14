@@ -10,7 +10,16 @@
   </canvas>
 
   <p>Player count: <span id="playercount">?</span></p>
-  <p>Flags placed: <span id="flagsplaced">?</span>/<span id="flagstotal">?</span></p>
+  <p>Flags placed: <span id="flagsplaced">?</span>/<span id="flagstotal">?</span></p></br>
+
+  <h2>Start a new game</h2>
+
+  <span>Width: </span><input type="number" id="widthField" value="24" maxlength="2" size="2">
+  <span>Height: </span><input type="number" id="heightField" value="16" maxlength="2" size="2">
+  <span>Mine density %: </span><input type="number" id="mineDensityField" value="15" maxlength="2" size="2"></br></br>
+
+  <button onclick="newGame()" type="button">New game<span id="resetbutton"></span></button>
+
   <script src="/socket.io/socket.io.js"></script>
   <script>
     let socket = io();
@@ -21,6 +30,13 @@
     function clicked(x, y) {
       socket.emit('clicked', { x, y });
     }
+    function newGame() {
+      var gameWidth = document.getElementById("widthField").value;
+      var gameHeight = document.getElementById("heightField").value;
+      var mineDensity = document.getElementById("mineDensityField").value;
+
+      socket.emit('newGame', { gameWidth, gameHeight, mineDensity });
+    }
     socket.on('playercount updated', (newCount) => {
       playerCount = newCount;
       console.log({ playerCount });
@@ -29,11 +45,10 @@
     socket.on('gamestate updated', (newState) => {
       console.log('Gamestate update received:')
       console.log({ newState })
-
       arr = newState;
-      if (canvas === null) {
-        initCanvas();
-      }
+      //if (canvas === null) {
+      initCanvas();
+      //}
       draw();
     });
 
@@ -55,22 +70,22 @@
 
 
 
-      img_unid.src = 'assets/unrevealed.png';
-      img_flag.src = 'assets/flag.png';
-      img_mine.src = 'assets/mine_hit.png';
-      img_0.src = 'assets/mine_0.png';
-      img_1.src = 'assets/mine_1.png';
-      img_2.src = 'assets/mine_2.png';
-      img_3.src = 'assets/mine_3.png';
-      img_4.src = 'assets/mine_4.png';
-      img_5.src = 'assets/mine_5.png';
-      img_6.src = 'assets/mine_6.png';
-      img_7.src = 'assets/mine_7.png';
-      img_8.src = 'assets/mine_8.png';
-    
+    img_unid.src = 'assets/unrevealed.png';
+    img_flag.src = 'assets/flag.png';
+    img_mine.src = 'assets/mine_hit.png';
+    img_0.src = 'assets/mine_0.png';
+    img_1.src = 'assets/mine_1.png';
+    img_2.src = 'assets/mine_2.png';
+    img_3.src = 'assets/mine_3.png';
+    img_4.src = 'assets/mine_4.png';
+    img_5.src = 'assets/mine_5.png';
+    img_6.src = 'assets/mine_6.png';
+    img_7.src = 'assets/mine_7.png';
+    img_8.src = 'assets/mine_8.png';
 
 
-      
+
+
 
     function initCanvas() {
       canvas = document.getElementById('myCanvas'),
@@ -141,9 +156,9 @@
             default:
               break;
           }
-          }
         }
-      };
+      }
+    };
 
     window.addEventListener('load', (event) => {
       draw();

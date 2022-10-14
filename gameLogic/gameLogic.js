@@ -7,7 +7,13 @@ const runGameLogic = (clientMap, fullMap, x, y) => {
         if (fullMap[y][x] === 11) {
             return -1;
         }
-        openAdjacentTiles(clientMap, fullMap, x, y, [])
+        // Check if current has no mines around it, open adjacent tiles in that case.
+        if (fullMap[y][x] === 0) {
+            openAdjacentTiles(clientMap, fullMap, x, y, [])
+        // Otherwise we only open that tile.
+        } else {
+            clientMap[y][x] = fullMap[y][x];
+        }
 
         return allOpened(clientMap, fullMap) ? 1 : 0;
     } else {
@@ -21,7 +27,7 @@ const runGameLogic = (clientMap, fullMap, x, y) => {
 const allOpened = (clientMap, fullMap) => {
     for (let x = 0; x < clientMap[0].length; x += 1) {
         for (let y = 0; y < clientMap.length; y += 1) {
-            if (clientMap[y][x] == 9  && fullMap[y][x] != 11) {
+            if (clientMap[y][x] == 9 && fullMap[y][x] != 11) {
                 return false;
             }
         }
@@ -49,8 +55,11 @@ const openAdjacentTiles = (clientMap, fullMap, x, y, visited) => {
             if (fullMap[cury][curx] > 8) {
                 continue;
             }
+
             clientMap[cury][curx] = fullMap[cury][curx]
-            openAdjacentTiles(clientMap, fullMap, curx, cury, visited)
+            if (fullMap[cury][curx] === 0) {
+                openAdjacentTiles(clientMap, fullMap, curx, cury, visited)
+            }
         }
     }
 };

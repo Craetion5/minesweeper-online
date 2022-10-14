@@ -22,14 +22,14 @@ const updatePlayerCount = (state) => {
   io.emit("playercount updated", clientAmount);
 };
 
-const initGame = () => {
-  const maps = createMap(16, 24);
+const initGame = (gameWidth, gameHeight, mineDensity) => {
+  const maps = createMap(gameHeight, gameWidth, mineDensity);
   fullMap = maps.fullMap;
   clientMap = maps.clientMap;
 
 };
 
-initGame();
+initGame(24, 16, 15);
 
 
 app.use(express.static("public"));
@@ -47,7 +47,7 @@ io.on("connection", (socket) => {
     updatePlayerCount();
   });
   socket.on("clicked", (data) => {
-    console.log({data})
+    console.log({ data })
     console.log("Player clicked on ", { x: data.x, y: data.y, tile: clientMap[data.y][data.x] });
     const state = runGameLogic(clientMap, fullMap, data.x, data.y);
     if (state === 1) {
@@ -59,6 +59,11 @@ io.on("connection", (socket) => {
     if (state != null) {
       updateStateToClients();
     }
+  });
+  socket.on("newGame", (data) => {
+    console.log("Starting a new game...")
+    initGame(data.gameWidth, data.gameHeight, data.mineDensity);
+    updateStateToClients(clientMap);
   });
 });
 
