@@ -1,9 +1,11 @@
-const map = [];
-const clientMap = [];
+let map = [];
+let clientMap = [];
 let mapHeight = null;
 let mapWidth = null;
 
 function createMap(height, width, minesPercentage) {
+  map = []
+  clientMap = []
   mapHeight = height;
   mapWidth = width;
   for (let y = 0; y < height; y++) {
