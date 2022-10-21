@@ -1,18 +1,27 @@
 
 const runGameLogic = (clientMap, fullMap, x, y) => {
-    // Return -1 if game lost, 1 if won, 0 if continues. null if no update
+    // Return -1 if game lost, 1 if won, 0 if continues, 2 if map is rerolled due to first click. null if no update
+
+    let firstClick = freshGame(clientMap, fullMap);
+
     if (clientMap[y][x] === 9) {
 
         // Check if current is mine.
         if (fullMap[y][x] === 11) {
+            if (firstClick) {
+                return 2;
+            }
             return -1;
         }
         // Check if current has no mines around it, open adjacent tiles in that case.
         if (fullMap[y][x] === 0) {
             openAdjacentTiles(clientMap, fullMap, x, y, [])
-        // Otherwise we only open that tile.
+            // Otherwise we only open that tile.
         } else {
             clientMap[y][x] = fullMap[y][x];
+            if (firstClick) {
+                return 2;
+            }
         }
 
         return allOpened(clientMap, fullMap) ? 1 : 0;
@@ -28,6 +37,18 @@ const allOpened = (clientMap, fullMap) => {
     for (let x = 0; x < clientMap[0].length; x += 1) {
         for (let y = 0; y < clientMap.length; y += 1) {
             if (clientMap[y][x] == 9 && fullMap[y][x] != 11) {
+                return false;
+            }
+        }
+    }
+    return true;
+};
+
+// Checks if this is a fresh game
+const freshGame = (clientMap, fullMap) => {
+    for (let x = 0; x < clientMap[0].length; x += 1) {
+        for (let y = 0; y < clientMap.length; y += 1) {
+            if (clientMap[y][x] != 9 && clientMap[y][x] != 10) {
                 return false;
             }
         }

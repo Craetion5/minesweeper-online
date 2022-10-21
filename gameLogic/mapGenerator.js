@@ -26,6 +26,18 @@ function inBounds(x, y) {
   return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
 }
 
+function calculateMinesPercentage(fullMap) {
+  var amountOfMines = 0;
+  for (let i = 0; i < fullMap[0].length; i++) {
+    for (let j = 0; j < fullMap.length; j++) {
+      if (fullMap[j][i] == 11) {
+        amountOfMines++;
+      }
+    }
+  }
+  return amountOfMines / (fullMap.length * fullMap[0].length) * 100;
+}
+
 function placeMines(height, width, minesPercentage) {
   var amountOfMines = height * width * minesPercentage / 100;
 
@@ -55,4 +67,4 @@ function placeMines(height, width, minesPercentage) {
     }
   }
 }
-module.exports = { createMap };
+module.exports = { createMap, calculateMinesPercentage };
