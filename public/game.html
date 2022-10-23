@@ -11,6 +11,20 @@
 
   <p>Player count: <span id="playercount">?</span></p>
   <p>Flags placed: <span id="flagsplaced">0</span>/<span id="flagstotal">?</span></p></br>
+  <div id="gameOver">
+    <h2 id="gameOverHeader">Game over</h2>
+    <p>Automatic restart in: <span id="time">10</span> s</p> 
+    
+    <button onclick="newGame()" type="button">Restart with previous settings<span id="resetbutton"></span></button>
+  </div>
+  
+  <div id="victory">
+    <h2 id="victoryHeader">You have won the game</h2>
+    <p>Automatic restart in: <span id="time">10</span></p> 
+
+    <button onclick="newGame()" type="button">Restart with previous settings<span id="resetbutton"></span></button>
+  </div>
+ 
 
   <h2>Start a new game</h2>
 
@@ -28,6 +42,8 @@
     var ctx;
     var canvas = null;
     var flags = 0;
+    var duration = 10;
+    var x;
     function clicked(x, y) {
       socket.emit('clicked', { x, y });
     }
@@ -35,29 +51,74 @@
       socket.emit('rightClicked', { x, y });
     }
     function newGame() {
+      var div = document.getElementById("gameOver");
+      div.style.display = "none";
+      var div = document.getElementById("victory");
+      div.style.display = "none";
       var gameWidth = document.getElementById("widthField").value;
       var gameHeight = document.getElementById("heightField").value;
       var mineDensity = document.getElementById("mineDensityField").value;
 
       socket.emit('newGame', { gameWidth, gameHeight, mineDensity });
     }
+    function startTimer(display){
+    
+      var timer = duration, seconds;
+      x = setInterval(function () {
+          
+          seconds = parseInt(timer % 60, 10);
+
+          seconds = seconds < 10 ? "0" + seconds : seconds;
+
+          display.textContent =  seconds;
+
+          if (--timer < 0) {
+              timer = duration;
+              
+              newGame();
+          }
+      }, 1000);
+    };
     socket.on('playercount updated', (newCount) => {
       playerCount = newCount;
       console.log({ playerCount });
       document.getElementById("playercount").textContent = playerCount;
     });
-    socket.on('gamestate updated', (newState) => {
+    socket.on('gamestate updated', (newState, gameStatus) => {
       console.log('Gamestate update received:')
       console.log({ newState })
+      console.log("game status " + gameStatus)
+      var div = document.getElementById("gameOver");
+      div.style.display = "none";
+      var div = document.getElementById("victory");
+      div.style.display = "none";
       arr = newState;
       if (canvas === null) {
       initCanvas();
       }
       draw();
+      
+      if(gameStatus === 1 ){
+        var div = document.getElementById("victory");
+        div.style.display = true;
+        div.style.display = "block";
+        display = document.querySelector('#time');
+        startTimer(display);
+
+      } else if(gameStatus === -1){
+        var div = document.getElementById("gameOver");
+        div.style.display = true;
+        div.style.display = "block";
+        display = document.querySelector('#time');
+        startTimer(display);
+      }
     });
     socket.on('new game activated', (newState) => {
+      
       console.log('New game activation received:')
       console.log({ newState })
+      duration = 10;
+      clearInterval(x);
       arr = newState;
       ctx = canvas.getContext('2d');
       ctx.canvas.height = arr.length * 21;
@@ -95,6 +156,8 @@
     img_6.src = 'assets/mine_6.png';
     img_7.src = 'assets/mine_7.png';
     img_8.src = 'assets/mine_8.png';
+
+
 
 
 
@@ -185,6 +248,15 @@
 
 
   </script>
+  <style>
+    #victoryHeader {
+      color: green
+    }
+    #gameOverHeader {
+      color: red;
+      
+    }
+  </style>
 
 </body>
 
