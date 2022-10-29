@@ -6,7 +6,7 @@ const path = require("path");
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
-const { createMap} = require("./gameLogic/mapGenerator.js");
+const { createMap, calculateMinesPercentage } = require("./gameLogic/mapGenerator.js");
 const { runGameLogic } = require("./gameLogic/gameLogic.js");
 let clientAmount = 0;
 
@@ -62,6 +62,17 @@ io.on("connection", (socket) => {
       console.log("Game over")
       clientMap = fullMap // reveal map if game over
       gameStatus = -1
+    } else if (state === 2) {
+      //first click needs to be safe
+      var done = false;
+      while (!done) {
+        let minesPercentage = calculateMinesPercentage(fullMap);
+        initGame(clientMap[0].length, clientMap.length, minesPercentage);
+        updateNewGameToClients(clientMap);
+        if (runGameLogic(clientMap, fullMap, data.x, data.y) != 2) {
+          done = true;
+        }
+      }
     }
     if (state != null) {
       updateStateToClients();
@@ -72,7 +83,7 @@ io.on("connection", (socket) => {
     console.log("Player right clicked on ", { x: data.x, y: data.y, tile: clientMap[data.y][data.x] });
     if (clientMap[data.y][data.x] === 10) {
       clientMap[data.y][data.x] = 9;
-    } else if (clientMap[data.y][data.x] === 9){
+    } else if (clientMap[data.y][data.x] === 9) {
       clientMap[data.y][data.x] = 10;
     }
     updateStateToClients(clientMap);
