@@ -22,4 +22,4 @@ The Express and Socket.io libraries do not have many downsides, at least at the 
 
 Because the backend is built on NodeJS, it is single-threaded. If the project were to be scaled to handle larger amounts of players or several simultaneous game sessions, this could become a problem. However, worker threads are possible, which allows parallel JavaScript execution.
 
-The chosen system architecture where the game logic is ran on the backend, has some pros and cons which are evaluated in the [architecture-document](architecture.md)-document.
+The chosen system architecture where the game logic is ran on the backend, has some pros and cons which are evaluated in the [architecture](architecture.md)-document.
