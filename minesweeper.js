@@ -15,7 +15,7 @@ let clientMap = [];
 
 // After game state update, broadcast new state to all clients
 const updateStateToClients = () => {
-  io.emit("gamestate updated", clientMap);
+  io.emit("gamestate updated", clientMap, gameStatus);
 };
 
 const updateNewGameToClients = () => {
@@ -44,8 +44,9 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
   clientAmount += 1;
+  gameStatus = 0;
   updatePlayerCount();
-  updateStateToClients(clientMap);
+  updateStateToClients(clientMap, gameStatus);
   socket.on("disconnect", () => {
     clientAmount -= 1;
     updatePlayerCount();
@@ -56,9 +57,11 @@ io.on("connection", (socket) => {
     const state = runGameLogic(clientMap, fullMap, data.x, data.y);
     if (state === 1) {
       console.log("Game won")
+      gameStatus = 1;
     } else if (state === -1) {
       console.log("Game over")
       clientMap = fullMap // reveal map if game over
+      gameStatus = -1
     } else if (state === 2) {
       //first click needs to be safe
       var done = false;
@@ -88,7 +91,7 @@ io.on("connection", (socket) => {
   socket.on("newGame", (data) => {
     console.log("Starting a new game...")
     initGame(data.gameWidth, data.gameHeight, data.mineDensity);
-    updateNewGameToClients(clientMap);
+    updateNewGameToClients(clientMap, gameStatus=0);
   });
 });
 
