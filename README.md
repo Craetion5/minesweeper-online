@@ -4,9 +4,15 @@ Minesweeper online is a project for the course "Networking systems and services"
 
 The basic idea is a HTML/JavaScript webpage that renders a minesweeper map that can be clicked by user, to solve minesweeper in cooperation with other users. The server will serve the webpage, run the game logic and use websocket connection via socket.io library to communicate with clients.
 
+The relevant code files are:
++ [minesweeper.js](minesweeper.js) for the backend main file
++ [gameLogic/gameLogic.js](gameLogic.js) for the game logic ran on backend
++ [public/game.html](game.html) for the frontend logic
+
 # Documentation
 
 + [Architecture](architecture.md)
++ [Modules](modules.md)
 
 # Running the server
 
