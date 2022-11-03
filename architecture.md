@@ -10,7 +10,7 @@ The server contains the game logic and serves many clients. When one client make
 
 Game logic happens in a NodeJS Express backend. The game is rendered on a HTML/JavaScript frontend. The Express server first serves the game.html file, which contains JavaScript code, which then creates a websocket connection to server using socket.io.
 
-The following diagram explains how the basic flow of logic happens with socket.io. Notice that because there can be many frontends connected to the same backend, and all messages sent by backend are sent to **all clients** at once. The diagram simply shows one frontend.
+The following diagram explains how the basic flow of logic happens with socket.io. Notice that because there can be many frontends connected to the same backend, all the messages sent by backend to client are sent to **all clients** at once. The diagram simply shows one frontend.
 
 ![Sequence diagram of flow of logic between frontend and backend](sequencediagram.png)
 
