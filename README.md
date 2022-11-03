@@ -7,7 +7,13 @@ The basic idea is a HTML/JavaScript webpage that renders a minesweeper map that 
 The relevant code files are:
 + [minesweeper.js](minesweeper.js) for the backend main file
 + [gameLogic/gameLogic.js](gameLogic.js) for the game logic ran on backend
-+ [public/game.html](game.html) for the frontend logic
++ [public/game.html](public/game.html) for the frontend logic
+
+# License
+
+The project is licensed under MIT-license, [read document here](LICENSE.md).
+
+We chose MIT-license because it accurately represents our desires for the project to be open-source and to limit any responsibility for us in case people use the code. It is also well compatible with the external libraries we used as they both use this same license (socket.io and Express).
 
 # Documentation
 
