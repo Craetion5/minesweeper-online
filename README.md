@@ -22,6 +22,9 @@ We chose MIT-license because it accurately represents our desires for the projec
 + [Fallacies & Future work](fallacies&future.md)
 + [Goals](goals.md)
 
+All code provided should be working. Minor bugs or issues may be found and they are documented as GitHub-issues:
++ [Issue: Click coordinates bug](https://github.com/Craetion5/minesweeper-online/issues/16)
+
 # Running the server
 
 Clone the project using git by `git clone https://github.com/Craetion5/minesweeper-online.git`
