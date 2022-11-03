@@ -13,6 +13,8 @@ The relevant code files are:
 
 + [Architecture](architecture.md)
 + [Modules](modules.md)
++ [Fallacies & Future work](fallacies&future.md)
++ [Goals](goals.md)
 
 # Running the server
 
