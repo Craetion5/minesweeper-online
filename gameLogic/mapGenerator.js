@@ -3,6 +3,13 @@ let clientMap = [];
 let mapHeight = null;
 let mapWidth = null;
 
+/**
+ * Creates a map with given height, width and mines percentage.
+ * @param {int} height 
+ * @param {int} width 
+ * @param {int} minesPercentage 
+ * @returns Object with fields fullMap, clientMap
+ */
 function createMap(height, width, minesPercentage) {
   map = []
   clientMap = []
@@ -26,6 +33,11 @@ function inBounds(x, y) {
   return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
 }
 
+/**
+ * Calculates percentage of mines in map
+ * @param {array} fullMap 
+ * @returns number, percentage of mines
+ */
 function calculateMinesPercentage(fullMap) {
   var amountOfMines = 0;
   for (let i = 0; i < fullMap[0].length; i++) {
@@ -38,6 +50,12 @@ function calculateMinesPercentage(fullMap) {
   return amountOfMines / (fullMap.length * fullMap[0].length) * 100;
 }
 
+/**
+ * Places mines on global map array
+ * @param {int} height Size of map in tiles
+ * @param {int} width 
+ * @param {int} minesPercentage Percentage of mines from map tiles
+*/
 function placeMines(height, width, minesPercentage) {
   var amountOfMines = height * width * minesPercentage / 100;
 
