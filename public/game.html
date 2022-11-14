@@ -1,276 +1,280 @@
 <!DOCTYPE html>
 <html>
+  <body>
+    <h1>Online Minesweeper</h1>
+    <p>Left click to reveal tile, right click to set flag.</p>
 
-<body>
+    <canvas
+      id="myCanvas"
+      oncontextmenu="return false"
+      style="border: 1px solid #000000"
+    >
+    </canvas>
 
-  <h1>Online Minesweeper</h1>
-  <p>Left click to reveal tile, right click to set flag.</p>
+    <p>Player count: <span id="playercount">?</span></p>
+    <p>
+      Flags placed: <span id="flagsplaced">0</span>/<span id="flagstotal"
+        >?</span
+      >
+    </p>
+    <div id="gameOver">
+      <h2 id="gameOverHeader">Game over</h2>
+      <p>Automatic restart in: <span id="time"></span>s</p>
 
-  <canvas id="myCanvas" oncontextmenu="return false" style="border:1px solid #000000;">
-  </canvas>
+      <button onclick="newGame()" type="button">
+        Restart with previous settings<span id="resetbutton"></span>
+      </button>
+    </div>
 
-  <p>Player count: <span id="playercount">?</span></p>
-  <p>Flags placed: <span id="flagsplaced">0</span>/<span id="flagstotal">?</span></p></br>
-  <div id="gameOver">
-    <h2 id="gameOverHeader">Game over</h2>
-    <p>Automatic restart in: <span id="time"></span>s</p> 
-    
-    <button onclick="newGame()" type="button">Restart with previous settings<span id="resetbutton"></span></button>
-  </div>
-  
-  <div id="victory">
-    <h2 id="victoryHeader">You have won the game</h2>
-    <p>Automatic restart in: <span id="timeV"></span>s</p> 
+    <div id="victory">
+      <h2 id="victoryHeader">You have won the game</h2>
+      <p>Automatic restart in: <span id="timeV"></span>s</p>
 
-    <button onclick="newGame()" type="button">Restart with previous settings<span id="resetbutton"></span></button>
-  </div>
- 
+      <button onclick="newGame()" type="button">
+        Restart with previous settings<span id="resetbutton"></span>
+      </button>
+    </div>
 
-  <h2>Start a new game</h2>
+    <h2>Start a new game</h2>
 
-  <span>Width: </span><input type="number" id="widthField" value="24" maxlength="2" size="2">
-  <span>Height: </span><input type="number" id="heightField" value="16" maxlength="2" size="2">
-  <span>Mine density %: </span><input type="number" id="mineDensityField" value="15" maxlength="2" size="2"></br></br>
+    <span>Width: </span
+    ><input type="number" id="widthField" value="24" maxlength="2" size="2" />
+    <span>Height: </span
+    ><input type="number" id="heightField" value="16" maxlength="2" size="2" />
+    <span>Mine density %: </span
+    ><input
+      type="number"
+      id="mineDensityField"
+      value="15"
+      maxlength="2"
+      size="2"
+    />
 
-  <button onclick="newGame()" type="button">New game<span id="resetbutton"></span></button>
+    <button onclick="newGame()" type="button">
+      New game<span id="resetbutton"></span>
+    </button>
 
-  <script src="/socket.io/socket.io.js"></script>
-  <script>
-    let socket = io();
-    var playerCount = 0;
-    var arr = [];
-    var ctx;
-    var canvas = null;
-    var flags = 0;
-    var duration = 10;
-    var x;
-    var timer = duration, seconds;
-    function clicked(x, y) {
-      socket.emit('clicked', { x, y });
-    }
-    function rightClicked(x, y) {
-      socket.emit('rightClicked', { x, y });
-    }
-    function newGame() {
-      var div = document.getElementById("gameOver");
-      div.style.display = "none";
-      var div = document.getElementById("victory");
-      div.style.display = "none";
-      var gameWidth = document.getElementById("widthField").value;
-      var gameHeight = document.getElementById("heightField").value;
-      var mineDensity = document.getElementById("mineDensityField").value;
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      let socket = io();
+      var playerCount = 0;
+      var arr = [];
+      var ctx;
+      var canvas = null;
+      var flags = 0;
+      var duration = 10;
+      var x;
+      var timer = duration,
+        seconds;
+      function clicked(x, y) {
+        socket.emit("clicked", { x, y });
+      }
+      function rightClicked(x, y) {
+        socket.emit("rightClicked", { x, y });
+      }
+      function newGame() {
+        var div = document.getElementById("gameOver");
+        div.style.display = "none";
+        var div = document.getElementById("victory");
+        div.style.display = "none";
+        var gameWidth = document.getElementById("widthField").value;
+        var gameHeight = document.getElementById("heightField").value;
+        var mineDensity = document.getElementById("mineDensityField").value;
 
-      socket.emit('newGame', { gameWidth, gameHeight, mineDensity });
-    }
-    function startTimer(display){
-    
-      
-      x = setInterval(function () {
-          
+        socket.emit("newGame", { gameWidth, gameHeight, mineDensity });
+      }
+      function startTimer(display) {
+        x = setInterval(function () {
           seconds = parseInt(timer % 60, 10);
 
           seconds = seconds < 10 ? "0" + seconds : seconds;
 
-          display.textContent =  seconds;
+          display.textContent = seconds;
           console.log(timer);
           if (--timer <= 0) {
-              timer = duration;
-             
-              newGame();
+            timer = duration;
+
+            newGame();
           }
-      }, 1000);
-    };
-    socket.on('playercount updated', (newCount) => {
-      playerCount = newCount;
-      console.log({ playerCount });
-      document.getElementById("playercount").textContent = playerCount;
-    });
-    socket.on('gamestate updated', (newState, gameStatus) => {
-      console.log('Gamestate update received:')
-      console.log({ newState })
-      console.log("game status " + gameStatus)
-      var div = document.getElementById("gameOver");
-      div.style.display = "none";
-      var div = document.getElementById("victory");
-      div.style.display = "none";
-      arr = newState;
-      if (canvas === null) {
-      initCanvas();
+        }, 1000);
       }
-      draw();
-      
-      if(gameStatus === 1 ){
-        var div = document.getElementById("victory");
-        div.style.display = true;
-        div.style.display = "block";
-        display = document.querySelector('#timeV');
-        display.textContent =  10;
-        startTimer(display);
-
-      } else if(gameStatus === -1){
+      socket.on("playercount updated", (newCount) => {
+        playerCount = newCount;
+        console.log({ playerCount });
+        document.getElementById("playercount").textContent = playerCount;
+      });
+      socket.on("gamestate updated", (newState, gameStatus) => {
+        console.log("Gamestate update received:");
+        console.log({ newState });
+        console.log("game status " + gameStatus);
         var div = document.getElementById("gameOver");
-        div.style.display = true;
-        div.style.display = "block";
-        display = document.querySelector('#time');
-        display.textContent =  10;
-        startTimer(display);
+        div.style.display = "none";
+        var div = document.getElementById("victory");
+        div.style.display = "none";
+        arr = newState;
+        if (canvas === null) {
+          initCanvas();
+        }
+        draw();
+
+        if (gameStatus === 1) {
+          var div = document.getElementById("victory");
+          div.style.display = true;
+          div.style.display = "block";
+          display = document.querySelector("#timeV");
+          display.textContent = 10;
+          startTimer(display);
+        } else if (gameStatus === -1) {
+          var div = document.getElementById("gameOver");
+          div.style.display = true;
+          div.style.display = "block";
+          display = document.querySelector("#time");
+          display.textContent = 10;
+          startTimer(display);
+        }
+      });
+      socket.on("new game activated", (newState) => {
+        console.log("New game activation received:");
+        console.log({ newState });
+        duration = 10;
+        timer = duration;
+        clearInterval(x);
+        arr = newState;
+        ctx = canvas.getContext("2d");
+        ctx.canvas.height = arr.length * 21;
+        ctx.canvas.width = arr[0].length * 21;
+
+        //clear end screens from other users
+        var div = document.getElementById("gameOver");
+        div.style.display = "none";
+
+        var div = document.getElementById("victory");
+        div.style.display = "none";
+
+        draw();
+      });
+
+      const img_unid = new Image(),
+        img_flag = new Image(),
+        img_mine = new Image(),
+        img_0 = new Image(),
+        img_1 = new Image(),
+        img_2 = new Image(),
+        img_3 = new Image(),
+        img_4 = new Image(),
+        img_5 = new Image(),
+        img_6 = new Image(),
+        img_7 = new Image(),
+        img_8 = new Image();
+
+      img_unid.src = "assets/unrevealed.png";
+      img_flag.src = "assets/flag.png";
+      img_mine.src = "assets/mine_hit.png";
+      img_0.src = "assets/mine_0.png";
+      img_1.src = "assets/mine_1.png";
+      img_2.src = "assets/mine_2.png";
+      img_3.src = "assets/mine_3.png";
+      img_4.src = "assets/mine_4.png";
+      img_5.src = "assets/mine_5.png";
+      img_6.src = "assets/mine_6.png";
+      img_7.src = "assets/mine_7.png";
+      img_8.src = "assets/mine_8.png";
+
+      function initCanvas() {
+        (canvas = document.getElementById("myCanvas")),
+          (canvasLeft = canvas.offsetLeft + canvas.clientLeft),
+          (canvasTop = canvas.offsetTop + canvas.clientTop);
+
+        ctx = canvas.getContext("2d");
+        ctx.canvas.height = arr.length * 21;
+        ctx.canvas.width = arr[0].length * 21;
+
+        canvas.addEventListener(
+          "click",
+          function () {
+            let x = Math.floor((event.pageX - canvasLeft) / 21);
+            let y = Math.floor((event.pageY - canvasTop) / 21);
+            console.log("left clicked at x: ", x, " y: ", y);
+
+            clicked(x, y);
+          },
+          false
+        );
+
+        canvas.addEventListener(
+          "contextmenu",
+          function () {
+            let x = Math.floor((event.pageX - canvasLeft) / 21);
+            let y = Math.floor((event.pageY - canvasTop) / 21);
+            console.log("right clicked at x: ", x, " y: ", y);
+
+            rightClicked(x, y);
+          },
+          false
+        );
       }
-
-    });
-    socket.on('new game activated', (newState) => {
-      
-      console.log('New game activation received:')
-      console.log({ newState })
-      duration = 10;
-      timer = duration
-      clearInterval(x);
-      arr = newState;
-      ctx = canvas.getContext('2d');
-      ctx.canvas.height = arr.length * 21;
-      ctx.canvas.width = arr[0].length * 21;
-
-      //clear end screens from other users
-      var div = document.getElementById("gameOver");
-        div.style.display = "none";
-      
-      var div = document.getElementById("victory");
-        div.style.display = "none";
-      
-      draw();
-    });
-
-
-
-    const img_unid = new Image(),
-      img_flag = new Image(),
-      img_mine = new Image(),
-      img_0 = new Image(),
-      img_1 = new Image(),
-      img_2 = new Image(),
-      img_3 = new Image(),
-      img_4 = new Image(),
-      img_5 = new Image(),
-      img_6 = new Image(),
-      img_7 = new Image(),
-      img_8 = new Image();
-
-
-
-
-    img_unid.src = 'assets/unrevealed.png';
-    img_flag.src = 'assets/flag.png';
-    img_mine.src = 'assets/mine_hit.png';
-    img_0.src = 'assets/mine_0.png';
-    img_1.src = 'assets/mine_1.png';
-    img_2.src = 'assets/mine_2.png';
-    img_3.src = 'assets/mine_3.png';
-    img_4.src = 'assets/mine_4.png';
-    img_5.src = 'assets/mine_5.png';
-    img_6.src = 'assets/mine_6.png';
-    img_7.src = 'assets/mine_7.png';
-    img_8.src = 'assets/mine_8.png';
-
-
-
-
-
-
-
-    function initCanvas() {
-      canvas = document.getElementById('myCanvas'),
-        canvasLeft = canvas.offsetLeft + canvas.clientLeft,
-        canvasTop = canvas.offsetTop + canvas.clientTop;
-
-      ctx = canvas.getContext('2d');
-      ctx.canvas.height = arr.length * 21;
-      ctx.canvas.width = arr[0].length * 21;
-
-
-      canvas.addEventListener('click', function () {
-        let x = Math.floor((event.pageX - canvasLeft) / 21);
-        let y = Math.floor((event.pageY - canvasTop) / 21);
-        console.log("left clicked at x: ", x, " y: ", y)
-
-        clicked(x, y);
-
-      }, false);
-
-      canvas.addEventListener('contextmenu', function () {
-        let x = Math.floor((event.pageX - canvasLeft) / 21);
-        let y = Math.floor((event.pageY - canvasTop) / 21);
-        console.log("right clicked at x: ", x, " y: ", y)
-
-        rightClicked(x, y);
-      }, false);
-
-    };
-    function draw() {
-      flags = 0;
-      document.getElementById("flagsplaced").textContent = 0;
-      for (let i = 0; i < arr[0].length; i++) {
-        for (let j = 0; j < arr.length; j++) {
-          switch (arr[j][i]) {
-            case 0:
-              ctx.drawImage(img_0, i * 21, j * 21, 21, 21);
-              break;
-            case 1:
-              ctx.drawImage(img_1, i * 21, j * 21, 21, 21);
-              break;
-            case 2:
-              ctx.drawImage(img_2, i * 21, j * 21, 21, 21);
-              break;
-            case 3:
-              ctx.drawImage(img_3, i * 21, j * 21, 21, 21);
-              break;
-            case 4:
-              ctx.drawImage(img_4, i * 21, j * 21, 21, 21);
-              break;
-            case 5:
-              ctx.drawImage(img_5, i * 21, j * 21, 21, 21);
-              break;
-            case 6:
-              ctx.drawImage(img_6, i * 21, j * 21, 21, 21);
-              break;
-            case 7:
-              ctx.drawImage(img_7, i * 21, j * 21, 21, 21);
-              break;
-            case 8:
-              ctx.drawImage(img_8, i * 21, j * 21, 21, 21);
-              break;
-            case 9:
-              ctx.drawImage(img_unid, i * 21, j * 21, 21, 21);
-              break;
-            case 10:
-              ctx.drawImage(img_flag, i * 21, j * 21, 21, 21);
-              flags++;
-              document.getElementById("flagsplaced").textContent = flags;
-              break;
-            case 11:
-              ctx.drawImage(img_mine, i * 21, j * 21, 21, 21);
-              break;
-            default:
-              break;
+      function draw() {
+        flags = 0;
+        document.getElementById("flagsplaced").textContent = 0;
+        for (let i = 0; i < arr[0].length; i++) {
+          for (let j = 0; j < arr.length; j++) {
+            switch (arr[j][i]) {
+              case 0:
+                ctx.drawImage(img_0, i * 21, j * 21, 21, 21);
+                break;
+              case 1:
+                ctx.drawImage(img_1, i * 21, j * 21, 21, 21);
+                break;
+              case 2:
+                ctx.drawImage(img_2, i * 21, j * 21, 21, 21);
+                break;
+              case 3:
+                ctx.drawImage(img_3, i * 21, j * 21, 21, 21);
+                break;
+              case 4:
+                ctx.drawImage(img_4, i * 21, j * 21, 21, 21);
+                break;
+              case 5:
+                ctx.drawImage(img_5, i * 21, j * 21, 21, 21);
+                break;
+              case 6:
+                ctx.drawImage(img_6, i * 21, j * 21, 21, 21);
+                break;
+              case 7:
+                ctx.drawImage(img_7, i * 21, j * 21, 21, 21);
+                break;
+              case 8:
+                ctx.drawImage(img_8, i * 21, j * 21, 21, 21);
+                break;
+              case 9:
+                ctx.drawImage(img_unid, i * 21, j * 21, 21, 21);
+                break;
+              case 10:
+                ctx.drawImage(img_flag, i * 21, j * 21, 21, 21);
+                flags++;
+                document.getElementById("flagsplaced").textContent = flags;
+                break;
+              case 11:
+                ctx.drawImage(img_mine, i * 21, j * 21, 21, 21);
+                break;
+              default:
+                break;
+            }
           }
         }
       }
-    };
 
-    window.addEventListener('load', (event) => {
-      draw();
-    })
-
-
-  </script>
-  <style>
-    #victoryHeader {
-      color: green
-    }
-    #gameOverHeader {
-      color: red;
-      
-    }
-  </style>
-
-</body>
-
+      window.addEventListener("load", (event) => {
+        draw();
+      });
+    </script>
+    <style>
+      #victoryHeader {
+        color: green;
+      }
+      #gameOverHeader {
+        color: red;
+      }
+    </style>
+  </body>
 </html>

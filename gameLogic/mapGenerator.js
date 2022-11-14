@@ -5,14 +5,14 @@ let mapWidth = null;
 
 /**
  * Creates a map with given height, width and mines percentage.
- * @param {int} height 
- * @param {int} width 
- * @param {int} minesPercentage 
+ * @param {int} height
+ * @param {int} width
+ * @param {int} minesPercentage
  * @returns Object with fields fullMap, clientMap
  */
 function createMap(height, width, minesPercentage) {
-  map = []
-  clientMap = []
+  map = [];
+  clientMap = [];
   mapHeight = height;
   mapWidth = width;
   for (let y = 0; y < height; y++) {
@@ -35,7 +35,7 @@ function inBounds(x, y) {
 
 /**
  * Calculates percentage of mines in map
- * @param {array} fullMap 
+ * @param {array} fullMap
  * @returns number, percentage of mines
  */
 function calculateMinesPercentage(fullMap) {
@@ -47,17 +47,17 @@ function calculateMinesPercentage(fullMap) {
       }
     }
   }
-  return amountOfMines / (fullMap.length * fullMap[0].length) * 100;
+  return (amountOfMines / (fullMap.length * fullMap[0].length)) * 100;
 }
 
 /**
  * Places mines on global map array
  * @param {int} height Size of map in tiles
- * @param {int} width 
+ * @param {int} width
  * @param {int} minesPercentage Percentage of mines from map tiles
-*/
+ */
 function placeMines(height, width, minesPercentage) {
-  var amountOfMines = height * width * minesPercentage / 100;
+  var amountOfMines = (height * width * minesPercentage) / 100;
 
   for (let index = 0; index < amountOfMines; index++) {
     mineX = Math.floor(Math.random() * width);
@@ -70,7 +70,7 @@ function placeMines(height, width, minesPercentage) {
 
     for (let dx = -1; dx <= 1; dx += 1) {
       for (let dy = -1; dy <= 1; dy += 1) {
-        if (dx === dy === 0) {
+        if ((dx === dy) === 0) {
           continue;
         }
         let x = mineX + dx;
