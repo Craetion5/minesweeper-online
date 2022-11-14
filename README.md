@@ -9,6 +9,8 @@ The relevant code files are:
 + [gameLogic/gameLogic.js](gameLogic.js) for the game logic ran on backend
 + [public/game.html](public/game.html) for the frontend logic
 
+Code is documented with JsDoc, which means that important functions are commented accordingly, and "out" folder has html documentation that can be viewed with browser if you clone the repository.
+
 # License
 
 The project is licensed under MIT-license, [read document here](LICENSE.md).
