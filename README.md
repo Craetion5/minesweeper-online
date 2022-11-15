@@ -24,8 +24,10 @@ We chose MIT-license because it accurately represents our desires for the projec
 + [Fallacies & Future work](fallacies&future.md)
 + [Goals](goals.md)
 
-All code provided should be working. Minor bugs or issues may be found and they are documented as GitHub-issues:
+All code provided should be working with the exception of some minor bugs, which may remain unnoticed for normal play. Unfixed but known bugs are documented as github-issues:
 + [Issue: Click coordinates bug](https://github.com/Craetion5/minesweeper-online/issues/16)
++ [Issue: Timer delay](https://github.com/Craetion5/minesweeper-online/issues/32)
++ [Issue: Game can be lost after winning](https://github.com/Craetion5/minesweeper-online/issues/34)
 
 # Running the server
 
